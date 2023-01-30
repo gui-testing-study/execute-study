@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { parse } = require('csv-parse');
-const { execSync, exec } = require('child_process');
+const { execSync } = require('child_process');
 const spawn = require('cross-spawn');
 
 let csvArray = [];
@@ -32,13 +32,6 @@ const executeStudy = (csvArray) => {
   const execute = (csv, n) => {
     const aplicacao = n === 1 ? '1_aplicacao' : '2_aplicacao';
     const aplicacaoUrl = n === 1 ? '1_aplicacao_url' : '2_aplicacao_url';
-
-    if (fs.existsSync(`workstation/${csv[aplicacao]}`)) {
-      execSync(`cd workstation && rm -R ${csv[aplicacao]}`);
-    }
-    execSync(
-      `cd workstation && git clone https://github.com/gui-testing-study/${csv[aplicacao]}.git`
-    );
     [
       `${n}_falta_1`,
       `${n}_falta_2`,
@@ -46,37 +39,27 @@ const executeStudy = (csvArray) => {
       `${n}_falta_4`,
       `${n}_falta_5`,
     ].forEach((falta) => {
+      console.log(`INSERINDO FALTA ${falta} NA APLICACAO ${aplicacao}`);
+      execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
       const filePath = `workstation/${csv[aplicacao]}/${csv[falta][0]}`;
       let file = fs.readFileSync(filePath).toString();
       fs.writeFileSync(filePath, file.replace(csv[falta][1], csv[falta][2]));
+      execSync('sleep 10');
+
+      const baseUrl = `BASE_URL="${csv[aplicacaoUrl]}"`;
+      execSync(`cd ../cytestion && sed -i '1c\\${baseUrl}' .env`);
+
+      let status = 0;
+      const options = ['generate-test:dev'];
+      const execCytestion = () => {
+        const execution = spawn.sync('yarn', options, {
+          stdio: 'inherit',
+          cwd: '/home/thiagomoura/workspace/mestrado/gui-testing-exercise/cytestion/',
+        });
+        if (execution.status !== 0) status = execution.status;
+      };
+      execCytestion();
     });
-    execSync(
-      'PID=`ps -eaf | lsof -t -i:8080 | grep -v grep`; if [[ "" !=  "$PID" ]]; then echo "killing $PID"; kill -9 $PID; fi;'
-    );
-    if (csv[aplicacao].includes('spring')) {
-      execSync(`cd workstation/${csv[aplicacao]} && ./mvnw spring-boot:run`);
-    } else {
-      exec(
-        `cd workstation/${csv[aplicacao]} && python3 -m http.server 8080`,
-        (err) => {
-          console.log(err);
-        }
-      );
-    }
-    execSync('sleep 10');
-
-    let status = 0;
-    const options = ['generate-test:dev'];
-    const execCytestion = () => {
-      const execution = spawn.sync('yarn', options, {
-        stdio: 'inherit',
-        cwd: '/home/thiagomoura/workspace/mestrado/gui-testing-exercise/cytestion/',
-      });
-      if (execution.status !== 0) status = execution.status;
-    };
-
-    execCytestion();
-    execSync(`cd workstation && rm -R ${csv[aplicacao]}`);
   };
 
   csvArray.forEach((csv) => {

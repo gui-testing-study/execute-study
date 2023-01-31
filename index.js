@@ -47,7 +47,9 @@ const executeStudy = (csvArray) => {
       execSync('sleep 10');
 
       const baseUrl = `BASE_URL="${csv[aplicacaoUrl]}"`;
+      const baseUrlApi = `BASE_URL_API="${csv[aplicacaoUrl]}"`;
       execSync(`cd ../cytestion && sed -i '1c\\${baseUrl}' .env`);
+      execSync(`cd ../cytestion && sed -i '2c\\${baseUrlApi}' .env`);
 
       let status = 0;
       const options = ['generate-test:dev'];

@@ -1,5 +1,5 @@
-SUTConnectorValue = "/usr/bin/chromedriver" "1920x900+0+0" "http://localhost:8060"
-DomainsAllowed = http://localhost:8060
+SUTConnectorValue = "/usr/bin/chromedriver" "1920x900+0+0" "http://localhost:8080"
+DomainsAllowed = http://localhost:8080
 
 Mode = Generate
 

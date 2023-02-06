@@ -1,12 +1,12 @@
 #!/bin/bash
-pid=$(ps -eaf | lsof -t -i:8080 | grep -v grep 2>&1)
+pid=$(ps -eaf | lsof -t -i:${PORT} | grep -v grep 2>&1)
 echo ${pid}
 if [ -z "${pid// }" ]; then
-  echo "nada pra derrubar"
-  cd workstation/spring-petclinic
+  cd workstation/${DIR}
   nohup ./mvnw spring-boot:run > ./log.txt 2>&1 & 
   exit 0
 fi
 kill -9 ${pid}
-echo "derrubei aqui"
+cd workstation/${DIR}
+nohup ./mvnw spring-boot:run > ./log.txt 2>&1 & 
 exit 0

@@ -36,7 +36,7 @@ const executeStudy = (csvArray) => {
   const execute = (csv, n) => {
     const aplicacao = n === 1 ? '1_aplicacao' : '2_aplicacao';
     const aplicacaoUrl = n === 1 ? '1_aplicacao_url' : '2_aplicacao_url';
-    // if (csv[aplicacao] === 'spring-shop-n3xt') return;
+    if (csv[aplicacao] === 'spring-shop-n3xt') return;
 
     [
       `${n}_falta_1`,
@@ -47,6 +47,7 @@ const executeStudy = (csvArray) => {
     ].forEach((falta) => {
       console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`);
       execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
+      execSync(`cd workstation/${csv[aplicacao]} && git clean -f -d`);
       const filePath = `workstation/${csv[aplicacao]}/${csv[falta][0]}`;
       let file = fs.readFileSync(filePath).toString();
       fs.writeFileSync(filePath, file.replace(csv[falta][1], csv[falta][2]));
@@ -54,7 +55,7 @@ const executeStudy = (csvArray) => {
       if (csv[aplicacao].includes('spring')) {
         const port = csv[aplicacaoUrl].split(':')[2];
         execSync(`PORT=${port} DIR=${csv[aplicacao]} ./drop-port.sh`);
-        execSync('sleep 15');
+        execSync('sleep 20');
       } else {
         execSync('sleep 5');
       }
@@ -81,6 +82,8 @@ const executeStudy = (csvArray) => {
       console.time('Time execution');
       execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
       console.timeEnd('Time execution');
+      totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
+
       // execCytestion();
       const artefatosTESTAR = fs.readdirSync('testar/output').filter((file) => file !== '.gitignore');
       let novoDiretorio;
@@ -91,10 +94,9 @@ const executeStudy = (csvArray) => {
       const fileReport = fs.readdirSync(`testar/output/${novoDiretorio}/HTMLreports`)[0];
       const reportHTML = fs.readFileSync(`testar/output/${novoDiretorio}/HTMLreports/${fileReport}`).toString();
       if (!reportHTML.includes('No problem detected')) {
-        faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(falta) : faltasEncontradasPorApp[csv[aplicacao]] = [falta];
+        faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(`falta ${totalFaltasPorApp[csv[aplicacao]]}`) : faltasEncontradasPorApp[csv[aplicacao]] = [`falta ${totalFaltasPorApp[csv[aplicacao]]}`];
         console.log(faltasEncontradasPorApp);
       }
-      totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
     });
   };
 

@@ -45,7 +45,7 @@ const executeStudy = (csvArray) => {
       `${n}_falta_4`,
       `${n}_falta_5`,
     ].forEach((falta) => {
-      console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${aplicacao}`);
+      console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`);
       execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
       const filePath = `workstation/${csv[aplicacao]}/${csv[falta][0]}`;
       let file = fs.readFileSync(filePath).toString();
@@ -78,25 +78,23 @@ const executeStudy = (csvArray) => {
         });
         if (execution.status !== 0) status = execution.status;
       };
-      if (!totalFaltasPorApp[csv[aplicacao]]) {
-        console.time('Time execution');
-        execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
-        console.timeEnd('Time execution');
-        // execCytestion();
-        const artefatosTESTAR = fs.readdirSync('testar/output').filter((file) => file !== '.gitignore');
-        let novoDiretorio;
-        artefatosTESTAR.forEach(arte => {
-          if (!artefatosAntigosTESTAR.includes(arte)) novoDiretorio = arte;
-        });
-        artefatosAntigosTESTAR = artefatosTESTAR;
-        const fileReport = fs.readdirSync(`testar/output/${novoDiretorio}/HTMLreports`)[0];
-        const reportHTML = fs.readFileSync(`testar/output/${novoDiretorio}/HTMLreports/${fileReport}`).toString();
-        if (!reportHTML.includes('No problem detected')) {
-          faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(falta) : faltasEncontradasPorApp[csv[aplicacao]] = [falta];
-          console.log(faltasEncontradasPorApp);
-        }
-        totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
+      console.time('Time execution');
+      execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
+      console.timeEnd('Time execution');
+      // execCytestion();
+      const artefatosTESTAR = fs.readdirSync('testar/output').filter((file) => file !== '.gitignore');
+      let novoDiretorio;
+      artefatosTESTAR.forEach(arte => {
+        if (!artefatosAntigosTESTAR.includes(arte)) novoDiretorio = arte;
+      });
+      artefatosAntigosTESTAR = artefatosTESTAR;
+      const fileReport = fs.readdirSync(`testar/output/${novoDiretorio}/HTMLreports`)[0];
+      const reportHTML = fs.readFileSync(`testar/output/${novoDiretorio}/HTMLreports/${fileReport}`).toString();
+      if (!reportHTML.includes('No problem detected')) {
+        faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(falta) : faltasEncontradasPorApp[csv[aplicacao]] = [falta];
+        console.log(faltasEncontradasPorApp);
       }
+      totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
     });
   };
 

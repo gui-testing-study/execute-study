@@ -2,6 +2,18 @@ const fs = require('fs');
 const { parse } = require('csv-parse');
 const { execSync } = require('child_process');
 const spawn = require('cross-spawn');
+const { performance } = require('perf_hooks');
+
+let resultadoTempo = '';
+function millisToMinutesAndSeconds(millis) {
+  let minutes = Math.floor(millis / 60000);
+  let seconds = ((millis % 60000) / 1000).toFixed(0);
+  return (
+    seconds == 60 ?
+      (minutes + 1) + ":00" :
+      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+  );
+}
 
 let artefatosAntigosTESTAR = [];
 let totalFaltasPorApp = {};
@@ -28,6 +40,7 @@ fs.createReadStream('csv input estudo empírico.csv')
   .on('end', function () {
     executeStudy(csvArray);
     console.log(totalFaltasPorApp);
+    console.log(resultadoTempo);
   });
 
 const executeStudy = (csvArray) => {
@@ -36,7 +49,7 @@ const executeStudy = (csvArray) => {
   const execute = (csv, n) => {
     const aplicacao = n === 1 ? '1_aplicacao' : '2_aplicacao';
     const aplicacaoUrl = n === 1 ? '1_aplicacao_url' : '2_aplicacao_url';
-    if (csv[aplicacao] === 'spring-shop-n3xt') return;
+    if (csv[aplicacao] !== 'website-learn-educational') return;
 
     [
       `${n}_falta_1`,
@@ -46,7 +59,7 @@ const executeStudy = (csvArray) => {
       `${n}_falta_5`,
     ].forEach((falta) => {
       console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`);
-      console.log(csv[falta][0]);
+      console.log(csv[falta]);
 
       execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
       execSync(`cd workstation/${csv[aplicacao]} && git clean -f -d`);
@@ -81,7 +94,12 @@ const executeStudy = (csvArray) => {
         });
         if (execution.status !== 0) status = execution.status;
       };
+
+      const startTime = performance.now()
       execCytestion();
+      const endTime = performance.now()
+      resultadoTempo += millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n'
+
       // console.time('Time execution');
       // execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
       // console.timeEnd('Time execution');

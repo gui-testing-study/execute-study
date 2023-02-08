@@ -12,6 +12,7 @@
   "dependencies": {
     "cross-spawn": "^7.0.3",
     "csv-parse": "^5.3.3",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "perf_hooks": "^0.0.1"
   }
 }

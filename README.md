@@ -29,9 +29,9 @@ in the parent directory:
 
 `git clone --branch branch/mestrado https://gitlab.com/lsi-ufcg/cytestion/cytestion.git`
 
-- adjust line 53 for execute one project per time;
+- adjust line 53 of `index-cytestion.js` for execute one project per time;
 
-- adjust line 89 for the correct absolute path of this cytestion repository cloned;
+- adjust line 89 of `index-cytestion.js` for the correct absolute path of this cytestion repository cloned;
 
 and then:
 
@@ -39,7 +39,9 @@ and then:
 
 # testar
 
-just execute:
+- adjust line 90 of `index-testar.js` for the correct absolute path of this cytestion repository cloned;
+
+and then:
 
 `node index-testar.js | tee ./outputfile.txt`
 

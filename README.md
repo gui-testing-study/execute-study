@@ -4,6 +4,10 @@ first, init the repositories:
 
 `init-repos.sh`
 
+install dependencies:
+
+`yarn install`
+
 now, in other 4 terminals execute the repositories.
 
 for spring-petclinic use: 

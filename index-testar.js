@@ -8,11 +8,9 @@ let resultadoTempo = '';
 function millisToMinutesAndSeconds(millis) {
   let minutes = Math.floor(millis / 60000);
   let seconds = ((millis % 60000) / 1000).toFixed(0);
-  return (
-    seconds == 60 ?
-      (minutes + 1) + ":00" :
-      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-  );
+  return seconds == 60
+    ? minutes + 1 + ':00'
+    : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
 let artefatosAntigosTESTAR = [];
@@ -50,6 +48,8 @@ const executeStudy = (csvArray) => {
     const aplicacao = n === 1 ? '1_aplicacao' : '2_aplicacao';
     const aplicacaoUrl = n === 1 ? '1_aplicacao_url' : '2_aplicacao_url';
 
+    if (csv[aplicacao] === 'spring-shop-n3xt') return;
+
     [
       `${n}_falta_1`,
       `${n}_falta_2`,
@@ -57,7 +57,9 @@ const executeStudy = (csvArray) => {
       `${n}_falta_4`,
       `${n}_falta_5`,
     ].forEach((falta) => {
-      console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`);
+      console.log(
+        `### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`
+      );
       console.log(csv[falta]);
 
       execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
@@ -76,25 +78,49 @@ const executeStudy = (csvArray) => {
 
       const SUTConnectorValue = `SUTConnectorValue = "/usr/bin/chromedriver" "1920x900+0+0" "${csv[aplicacaoUrl]}"`;
       const DomainsAllowed = `DomainsAllowed = ${csv[aplicacaoUrl]}`;
-      execSync(`cd testar/settings/webdriver_generic && sed -i '1c\\${SUTConnectorValue}' test.settings`);
-      execSync(`cd testar/settings/webdriver_generic && sed -i '2c\\${DomainsAllowed}' test.settings`);
+      execSync(
+        `cd testar/settings/webdriver_generic && sed -i '1c\\${SUTConnectorValue}' test.settings`
+      );
+      execSync(
+        `cd testar/settings/webdriver_generic && sed -i '2c\\${DomainsAllowed}' test.settings`
+      );
 
-      const startTime = performance.now()
-      execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
-      const endTime = performance.now()
-      resultadoTempo += millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n'
-      totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
+      const startTime = performance.now();
+      execSync(
+        `docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`
+      );
+      const endTime = performance.now();
+      resultadoTempo +=
+        millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n';
+      totalFaltasPorApp[csv[aplicacao]]
+        ? (totalFaltasPorApp[csv[aplicacao]] =
+            totalFaltasPorApp[csv[aplicacao]] + 1)
+        : (totalFaltasPorApp[csv[aplicacao]] = 1);
 
-      const artefatosTESTAR = fs.readdirSync('testar/output').filter((file) => file !== '.gitignore');
+      const artefatosTESTAR = fs
+        .readdirSync('testar/output')
+        .filter((file) => file !== '.gitignore');
       let novoDiretorio;
-      artefatosTESTAR.forEach(arte => {
+      artefatosTESTAR.forEach((arte) => {
         if (!artefatosAntigosTESTAR.includes(arte)) novoDiretorio = arte;
       });
       artefatosAntigosTESTAR = artefatosTESTAR;
-      const fileReport = fs.readdirSync(`testar/output/${novoDiretorio}/HTMLreports`)[0];
-      const reportHTML = fs.readFileSync(`testar/output/${novoDiretorio}/HTMLreports/${fileReport}`).toString();
+      const fileReport = fs.readdirSync(
+        `testar/output/${novoDiretorio}/HTMLreports`
+      )[0];
+      const reportHTML = fs
+        .readFileSync(
+          `testar/output/${novoDiretorio}/HTMLreports/${fileReport}`
+        )
+        .toString();
       if (!reportHTML.includes('No problem detected')) {
-        faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(`falta ${totalFaltasPorApp[csv[aplicacao]]}`) : faltasEncontradasPorApp[csv[aplicacao]] = [`falta ${totalFaltasPorApp[csv[aplicacao]]}`];
+        faltasEncontradasPorApp[csv[aplicacao]]
+          ? faltasEncontradasPorApp[csv[aplicacao]].push(
+              `falta ${totalFaltasPorApp[csv[aplicacao]]}`
+            )
+          : (faltasEncontradasPorApp[csv[aplicacao]] = [
+              `falta ${totalFaltasPorApp[csv[aplicacao]]}`,
+            ]);
         console.log(faltasEncontradasPorApp);
       }
     });

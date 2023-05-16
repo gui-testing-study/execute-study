@@ -1,5 +1,28 @@
 # execute-study
 
+first, init the repositories:
+
+`init-repos.sh`
+
+now, in other 4 terminals execute the repositories.
+
+for spring-petclinic use: 
+
+`./mvnw spring-boot:run`
+
+for website-bistro-restaurant use: 
+
+`python3 -m http.server 8070`
+
+for website-learn-educational use: 
+
+`python3 -m http.server 8060`
+
+
+for website-school-educational use: 
+
+`python3 -m http.server 8050`
+
 # cytestion
 
 in the parent directory:

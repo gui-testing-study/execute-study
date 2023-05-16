@@ -1,5 +1,5 @@
 #!/bin/bash
-
+mkdir -p workstation
 cd workstation
 git clone https://github.com/gui-testing-study/spring-petclinic.git
 git clone https://github.com/gui-testing-study/spring-shop-n3xt.git

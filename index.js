@@ -15,7 +15,6 @@ function millisToMinutesAndSeconds(millis) {
   );
 }
 
-let artefatosAntigosTESTAR = [];
 let totalFaltasPorApp = {};
 let faltasEncontradasPorApp = {};
 let csvArray = [];
@@ -49,6 +48,8 @@ const executeStudy = (csvArray) => {
   const execute = (csv, n) => {
     const aplicacao = n === 1 ? '1_aplicacao' : '2_aplicacao';
     const aplicacaoUrl = n === 1 ? '1_aplicacao_url' : '2_aplicacao_url';
+
+    //to execute one project for time.
     if (csv[aplicacao] !== 'website-learn-educational') return;
 
     [
@@ -80,11 +81,6 @@ const executeStudy = (csvArray) => {
       execSync(`cd ../cytestion && sed -i '1c\\${baseUrl}' .env`);
       execSync(`cd ../cytestion && sed -i '2c\\${baseUrlApi}' .env`);
 
-      // const SUTConnectorValue = `SUTConnectorValue = "/usr/bin/chromedriver" "1920x900+0+0" "${csv[aplicacaoUrl]}"`;
-      // const DomainsAllowed = `DomainsAllowed = ${csv[aplicacaoUrl]}`;
-      // execSync(`cd testar/settings/webdriver_generic && sed -i '1c\\${SUTConnectorValue}' test.settings`);
-      // execSync(`cd testar/settings/webdriver_generic && sed -i '2c\\${DomainsAllowed}' test.settings`);
-
       let status = 0;
       const options = ['generate-test:dev'];
       const execCytestion = () => {
@@ -100,23 +96,8 @@ const executeStudy = (csvArray) => {
       const endTime = performance.now()
       resultadoTempo += millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n'
 
-      // console.time('Time execution');
-      // execSync(`docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`);
-      // console.timeEnd('Time execution');
       totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
 
-      // const artefatosTESTAR = fs.readdirSync('testar/output').filter((file) => file !== '.gitignore');
-      // let novoDiretorio;
-      // artefatosTESTAR.forEach(arte => {
-      //   if (!artefatosAntigosTESTAR.includes(arte)) novoDiretorio = arte;
-      // });
-      // artefatosAntigosTESTAR = artefatosTESTAR;
-      // const fileReport = fs.readdirSync(`testar/output/${novoDiretorio}/HTMLreports`)[0];
-      // const reportHTML = fs.readFileSync(`testar/output/${novoDiretorio}/HTMLreports/${fileReport}`).toString();
-      // if (!reportHTML.includes('No problem detected')) {
-      //   faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(`falta ${totalFaltasPorApp[csv[aplicacao]]}`) : faltasEncontradasPorApp[csv[aplicacao]] = [`falta ${totalFaltasPorApp[csv[aplicacao]]}`];
-      //   console.log(faltasEncontradasPorApp);
-      // }
       execSync(`cp -r ../e2e/exploratory cytestion/output/$(date +%F-%T)`);
       if (status !== 0) {
         faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(`falta ${totalFaltasPorApp[csv[aplicacao]]}`) : faltasEncontradasPorApp[csv[aplicacao]] = [`falta ${totalFaltasPorApp[csv[aplicacao]]}`];

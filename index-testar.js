@@ -100,7 +100,7 @@ const executeStudy = (csvArray) => {
     });
   };
 
-  csvArray.filter((_,i) => i === (csvArray.length - 1)).forEach((csv) => {
+  csvArray.forEach((csv) => {
     execute(csv, 1);
     execute(csv, 2);
   });

@@ -39,6 +39,10 @@ and then:
 
 # testar
 
+in the parent directory:
+
+`git clone https://github.com/TESTARtool/TESTAR_dev.git`
+
 - adjust line 90 of `index-testar.js` for the correct absolute path of this cytestion repository cloned;
 
 and then:

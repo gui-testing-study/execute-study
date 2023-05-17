@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { parse } = require('csv-parse');
 const { execSync } = require('child_process');
-const spawn = require('cross-spawn');
 const { performance } = require('perf_hooks');
 
 let resultadoTempo = '';

@@ -8,11 +8,9 @@ let resultadoTempo = '';
 function millisToMinutesAndSeconds(millis) {
   let minutes = Math.floor(millis / 60000);
   let seconds = ((millis % 60000) / 1000).toFixed(0);
-  return (
-    seconds == 60 ?
-      (minutes + 1) + ":00" :
-      minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-  );
+  return seconds == 60
+    ? minutes + 1 + ':00'
+    : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
 let totalFaltasPorApp = {};
@@ -59,7 +57,9 @@ const executeStudy = (csvArray) => {
       `${n}_falta_4`,
       `${n}_falta_5`,
     ].forEach((falta) => {
-      console.log(`### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`);
+      console.log(
+        `### INSERINDO FALTA ${falta} NA APLICACAO ${csv[aplicacao]}`
+      );
       console.log(csv[falta]);
 
       execSync(`cd workstation/${csv[aplicacao]} && git checkout -- .`);
@@ -86,21 +86,31 @@ const executeStudy = (csvArray) => {
       const execCytestion = () => {
         const execution = spawn.sync('yarn', options, {
           stdio: 'inherit',
-          cwd: '/home/thiagomoura/workspace/mestrado/gui-testing-exercise/cytestion/',
+          cwd: '/home/lsi/mestrado/cytestion/',
         });
         if (execution.status !== 0) status = execution.status;
       };
 
-      const startTime = performance.now()
+      const startTime = performance.now();
       execCytestion();
-      const endTime = performance.now()
-      resultadoTempo += millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n'
+      const endTime = performance.now();
+      resultadoTempo +=
+        millisToMinutesAndSeconds(endTime - startTime) + '(min:sec)\n';
 
-      totalFaltasPorApp[csv[aplicacao]] ? totalFaltasPorApp[csv[aplicacao]] = totalFaltasPorApp[csv[aplicacao]] + 1 : totalFaltasPorApp[csv[aplicacao]] = 1;
+      totalFaltasPorApp[csv[aplicacao]]
+        ? (totalFaltasPorApp[csv[aplicacao]] =
+            totalFaltasPorApp[csv[aplicacao]] + 1)
+        : (totalFaltasPorApp[csv[aplicacao]] = 1);
 
       execSync(`cp -r ../e2e/exploratory cytestion/output/$(date +%F-%T)`);
       if (status !== 0) {
-        faltasEncontradasPorApp[csv[aplicacao]] ? faltasEncontradasPorApp[csv[aplicacao]].push(`falta ${totalFaltasPorApp[csv[aplicacao]]}`) : faltasEncontradasPorApp[csv[aplicacao]] = [`falta ${totalFaltasPorApp[csv[aplicacao]]}`];
+        faltasEncontradasPorApp[csv[aplicacao]]
+          ? faltasEncontradasPorApp[csv[aplicacao]].push(
+              `falta ${totalFaltasPorApp[csv[aplicacao]]}`
+            )
+          : (faltasEncontradasPorApp[csv[aplicacao]] = [
+              `falta ${totalFaltasPorApp[csv[aplicacao]]}`,
+            ]);
         console.log(faltasEncontradasPorApp);
       }
     });

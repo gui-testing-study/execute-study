@@ -1,13 +1,11 @@
 # Execute-study
 
+### Cytestion tool could be found here: [cytestion.zip](./cytestion.zip). Inside the zip, you will found a **complete** README.
+### TESTAR tool could be found here: https://github.com/TESTARtool/TESTAR_dev.
+
 # Study with Injected Faults
 
 The data used in the study with injected faults: [csv input estudo empírico.csv](./csv%20input%20estudo%20emp%C3%ADrico.csv). It is a csv divided with lines contained five faults for two applications. Each fault is divided like: `file$string$newString`.
-
-
-Cytestion tool could be found here: [cytestion.zip](./cytestion.zip). Inside the zip, you will found a **complete** README
-
-TESTAR tool could be found here: https://github.com/TESTARtool/TESTAR_dev.
 
 Need have instaled:
 

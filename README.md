@@ -1,5 +1,11 @@
 # execute-study
 
+the data used in both executions are `csv input estudo empírico.csv`. it is a csv divided with each line contained five faults for two applications:
+
+1_aplicacao | 1_aplicacao_url | 1_falta_1  | 1_falta_2 | 1_falta_3 | 1_falta_4 | 1_falta_5 | 2_aplicacao | 2_aplicacao_url | 2_falta_1 | 2_falta_2 | 2_falta_3 | 2_falta_4 | 2_falta_5
+
+### to execute
+
 first, init the repositories:
 
 `init-repos.sh`
@@ -54,5 +60,3 @@ and then:
 `node index-testar.js | tee ./outputfile.txt`
 
 - you can also modify the quantite of actions in: testar/settings/webdriver_generic/Protocol_webdriver_generic.java
-
-the data used in both executions are `csv input estudo empírico.csv`

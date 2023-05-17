@@ -87,7 +87,7 @@ const executeStudy = (csvArray) => {
 
       const startTime = performance.now();
       execSync(
-        `docker run --net=host --shm-size=512m --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/TESTAR_dev",target=/mnt --mount type=bind,source="/home/thiagomoura/workspace/mestrado/gui-testing-exercise/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`
+        `docker run --net=host --shm-size=512m --mount type=bind,source="/home/lsi/mestrado/execute-study/testar/settings",target=/testar/bin/settings --mount type=bind,source="/home/lsi/mestrado/TESTAR_dev",target=/mnt --mount type=bind,source="/home/lsi/mestrado/execute-study/testar/output",target=/testar/bin/output aslomp/testar:latest`
       );
       const endTime = performance.now();
       resultadoTempo +=

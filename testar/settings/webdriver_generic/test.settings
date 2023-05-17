@@ -6,7 +6,7 @@ Mode = Generate
 SUTConnector = WEB_DRIVER
 
 Sequences = 1
-SequenceLength = 100
+SequenceLength = 200
 
 SuspiciousTitles = .*[eE]rror.*|.*[eE]xcepti[o?]n.*|.*Something happened.*
 TagsForSuspiciousOracle = Title;WebName;WebTagName
